@@ -7,6 +7,7 @@ def print_board(board):
     for row in board:
         print(row)
 
+
 class Piece:
     def __init__(self, color, x, y):
         self.color = color
