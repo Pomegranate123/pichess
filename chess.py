@@ -19,6 +19,7 @@ class Pawn(Piece):
         Piece.__init__(self, color, x, y)
         self.moved = False"""
 
+
     def possible_moves(self, board):
         moves = []
         moves.append([self.x, self.y + self.color])
