@@ -1,14 +1,46 @@
 <template>
   <div class='blue merida'>
-    <div ref="board" class="cg-board-wrap"></div>
+    <div ref="board" class="cg-board-wrap"></div><br>
   </div>
 </template>
 
 <script>
+import Chess from 'chess.js'
 import { Chessground } from 'chessground';
 
 export default {
   name: 'chessboard',
+  data () {
+    return {
+      fen: this.fen_prop,
+      free: this.free_prop,
+      showThreats: this.showThreats_prop,
+      onPromotion: this.onPromotion_prop,
+      orientation: this.orientation_prop
+    }
+  },
+  props: {
+    fen_prop: {
+      type: String,
+      default: '',
+    },
+    free_prop: {
+      type: Boolean,
+      default: false,
+    },
+    showThreats_prop: {
+      type: Boolean,
+      default: false,
+    },
+    onPromotion_prop: {
+      type: Function,
+      default: () => 'q',
+    },
+    orientation_prop: {
+      type: String,
+      default: 'white',
+    }
+  },
   mounted() 
   {
     this.board = Chessground(
@@ -22,8 +54,149 @@ export default {
       }
     );
   },
+  watch: {
+    fen: function () {
+      this.loadPosition()
+    },
+    orientation: function () {
+      this.loadPosition()
+    },
+    showThreats: function () {
+      if (this.showThreats) {
+        this.paintThreats()
+      }
+    }
+  },
+  methods: {
+    possibleMoves () {
+      const dests = {}
+      this.game.SQUARES.forEach(s => {
+        const ms = this.game.moves({square: s, verbose: true})
+        if (ms.length) dests[s] = ms.map(m => m.to)
+      })
+      return dests
+    }
+  },
+  opponentMoves () {
+    let originalPGN = this.game.pgn()
+    let tokens = this.game.fen().split(' ')
+    tokens[1] = tokens[1] === 'w' ? 'b' : 'w'
+    tokens = tokens.join(' ')
+    let valid = this.game.load(tokens)
+    if (valid) {
+      let moves = this.game.moves({verbose: true})
+      this.game.load_pgn(originalPGN)
+      return moves
+    } else {
+      return []
+    }
+  },
+  toColor () {
+    return (this.game.turn() === 'w') ? 'white' : 'black'
+  },
+  paintThreats () {
+    let moves = this.game.moves({verbose: true})
+    let threats = []
+    moves.forEach(function (move) {
+      threats.push({orig: move.to, brush: 'yellow'})
+
+      if (move['captured']) {
+        threats.push({orig: move.from, dest: move.to, brush: 'red'})
+      }
+      if (move['san'].includes('+')) {
+        threats.push({orig: move.from, dest: move.to, brush: 'blue'})
+      }
+    }) 
+    this.board.setShapes(threats)
+  },
+  calculatePromotion () {
+    let moves = this.game.moves({verbose: true})
+    this.promotions = []
+    for (let move of moves) {
+      if (move.promotion) {
+        this.promotions.push(move)
+      }
+    }
+  },
+  isPromotion (orig, dest) {
+    let filteredPromotions = this.promotions.filter(move => move.from === orig && move.to === dest)
+    return filteredPromotions.length > 0
+  },
+  changeTurn () {
+    return (orig, dest, metadata) => {
+      if (this.isPromotion(orig, dest)) {
+        this.promoteTo = this.onPromotion()
+      }
+      this.game.move({from: orig, to: dest, promotion: this.promoteTo})
+      this.board.set({
+        fen: this.game.fen(),
+        turnColor: this.toColor(),
+        movable: {
+          color: this.toColor(),
+          dests: this.possibleMoves(),
+        }
+      })
+      this.calculatePromotions()
+      this.afterMove()
+    }
+  },
+  afterMove () {
+    if (this.showThreats) {
+      this.pointThreats()
+    }
+    let threats = this.countThreats(this.toColor()) || {}
+    threats['history'] = this.game.history()
+    threats['fen'] = this.game.fen()
+    this.$emit('onMove', threats)
+  },
+  countThreats (color) {
+    let threats = {}
+    let captures = 0
+    let checks = 0
+    let moves = this.game.moves({verbose: true})
+    if (color !== this.toColor()) {
+      moves = this.opponentMoves()
+    }
+
+    if (moves.length === 0) {
+      return null
+    }
+
+    moves.forEach(function (move) {
+      if (move['captured']) {
+        captures++
+      }
+      if (move['san'].includes('+')) {
+        checks++
+      }
+    })
+
+    threats[`legal_${color}`] = uniques(moves.map(x => x.from + x.to)).length
+    threats[`checks_${color}`] = checks
+    threats[`threat_${color}`] = captures
+    threats[`turn`] = color
+    return threats
+  },
+  loadPosition () {
+    this.game.load(this.fen)
+    this.board = Chessground(this.$refs.board, {
+      fen: this.game.fen(),
+      turnColor: this.toColor(),
+      movable: {
+        color: this.toColor(),
+        free: this.free,
+        dests: this.possibleMoves(),
+      },
+      orientation: this.orientation,
+    })
+    this.board.set({
+      movable: { events: { after: this.changeTurn() } },
+    })
+    this.afterMove()
+  },
   created()
   {
+    this.game = new Chess()
     this.board = null
     this.promotions = []
     this.promoteTo = 'q'
