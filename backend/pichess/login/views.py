@@ -11,8 +11,9 @@ def test(request):
 
 def register(request):
     if request.method == 'POST':
-        form = request.POST
+        form = request.User
 
+        #if form.is_valid():
         USERNAME = form.get('username')
         PASSWORD = form.get('password')
         user = Player.objects.create(
