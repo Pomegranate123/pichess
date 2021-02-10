@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  web:
+    #    restart: always
+    build: ./backend
+    command: bash startup.sh
+    expose:
+      - "8000"
+    volumes:
+      - ./backend:/code
+  nginx:
+    #restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html/frontend:ro
+      - ./backend/public:/usr/share/nginx//html/backend/public:ro
+    links:
+      - web
+    depends_on:
+      - web
