@@ -1,54 +1,64 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-#from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.shortcuts import render, redirect
+from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .models import Player
+from .forms import PlayerForm
 # Create your views here.
 
-def test(request):
-    return render(request, "login/form.html")
+
+def log_in(request):
+    username = request.POST['uname']
+    password = request.POST['pwd']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        return redirect('../profile')
+    else:
+        return redirect('../../login')
+
+def profile(request):
+    if User.is_authenticated:
+        USERNAME = request.user.username
+
+        try:
+            RATING = request.user.player.rating
+
+        except:
+            p = Player(id=request.user.id, rating=1500)
+            p.save()
+
+        context = {
+            'username': USERNAME,
+            'rating': RATING
+        }
+        return JsonResponse(context)
+    else:
+        return HttpResponse("LOGIN!")
 
 def register(request):
     if request.method == 'POST':
-        form = request.User
+        form = UserCreationForm(request.POST)
+        player_form = PlayerForm()
 
-        #if form.is_valid():
-        USERNAME = form.get('username')
-        PASSWORD = form.get('password')
-        user = Player.objects.create(
-            username = USERNAME,
-            password = PASSWORD,
-            rating = 1500
-        )
-        messages.succes(request, f'Account created for {username}')
+        if form.is_valid():
+            user = form.save()
+            player = player_form.save(commit=False)
+            player.user = user
+            player.save()
+            return redirect('../../login/')
 
     else:
-        #form = formid()
-        pass
-    
+        form = UserCreationForm()
+        player_form = PlayerForm()
+
+
     context = {
-        'username': request.user
+        'form': form,
+        'player_form': player_form
     }
-
-    return render(request, 'login/regist.html', context)
-
+    return render(request, 'login/register.html', context)
 
 
-
-   
-    
-
-"""
-def login(request):
-    if request.method == 'POST':
-        form = loginform(request.POST)
-
-        user = authenticate(username=form.get('username'), password=form.get('password'))
-                
-        if user is not None:
-            login(request, user)
-        else:
-#            pass
-"""
-#    return render(request, "login/form.html")

@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'home',
     'login',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'pichess.urls'
+ASGI_APPLICATION = 'pichess.routing.application'
 
 TEMPLATES = [
     {
@@ -121,4 +123,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-#AUTH_USER_MODEL = 'core.User'
+LOGIN_REDIRECT_URL = "../register"
