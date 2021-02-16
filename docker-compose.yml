@@ -1,23 +1,24 @@
 version: '3.9'
 
 services:
-  web:
-    #    restart: always
+  frontend:
+    build: ./frontend
+  backend:
     build: ./backend
-    command: bash startup.sh
+    command: python manage.py runserver
+    ports:
+      - "8000:8000"
     expose:
       - "8000"
     volumes:
       - ./backend:/code
+    depends_on:
+      - frontend
   nginx:
-    #restart: always
     build: ./nginx
     ports:
       - "80:80"
     volumes:
-      - ./frontend:/usr/share/nginx/html/frontend:ro
-      - ./backend/public:/usr/share/nginx//html/backend/public:ro
-    links:
-      - web
+      - ./frontend/dist:/usr/share/nginx/html
     depends_on:
-      - web
+      - backend

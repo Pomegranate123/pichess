@@ -1,17 +1,6 @@
 <template>
-  <chessboard></chessboard>
+  <router-view />
 </template>
-
-<script>
-import chessboard from './components/Chessboard.vue'
-
-export default {
-  name: 'App',
-  components: {
-    chessboard
-  }
-}
-</script>
 
 <style>
 #app {
