@@ -1,25 +1,24 @@
 version: '3.9'
 
 services:
-  frontend:
-    build: ./frontend
   backend:
-    #container_name: backend
-    #hostname: backend
+    container_name: backend
     build: ./backend
     volumes:
-      - ./backend/:/backend
-    working_dir: /backend/
-    command: python manage.py runserver 0.0.0.0:8000
-    #ports:
-      #- "8000:8000"
+      - ./backend:/backend
+    working_dir: /backend
+    command: python manage.py runserver 0:8000
+    expose:
+      - "8000"
   nginx:
+    container_name: nginx
     image: nginx:latest
-      #build: ./nginx
     ports:
       - "80:8080"
     volumes:
+      # Replace default config with ours
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Place frontend build files
       - ./frontend/dist:/usr/share/nginx/html
     depends_on:
       - backend
