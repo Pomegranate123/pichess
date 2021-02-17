@@ -11,7 +11,7 @@ export default {
   },
   mounted () {
     this.axios
-    .get('http://localhost:8000/api')
+    .get('http://localhost/api')
     .then(response => {
       console.log(response)
     })
