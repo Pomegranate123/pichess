@@ -19,8 +19,9 @@ from django.urls import include
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include("home.urls")),
-    path('', include("django.contrib.auth.urls")),
-    path('accounts/', include('login.urls'))
+    path('api/admin/', admin.site.urls),
+    path('api/', include("home.urls")),
+    path('api/', include("django.contrib.auth.urls")),
+    path('api/accounts/', include('login.urls')),
+    path('api/game/', include('game.urls'))
 ]

@@ -10,8 +10,8 @@ from .forms import PlayerForm
 
 
 def log_in(request):
-    username = request.POST['uname']
-    password = request.POST['pwd']
+    username = request.POST['username']
+    password = request.POST['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
@@ -22,13 +22,15 @@ def log_in(request):
 def profile(request):
     if User.is_authenticated:
         USERNAME = request.user.username
+        RATING = request.user.player.rating
 
-        try:
+        """
+        if request.user.player.rating != NULL:
             RATING = request.user.player.rating
-
-        except:
+        else:
             p = Player(id=request.user.id, rating=1500)
             p.save()
+        """
 
         context = {
             'username': USERNAME,

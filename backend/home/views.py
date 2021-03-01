@@ -19,8 +19,9 @@ def profile(request):
         data = {
             #'username': username,
             'rating': str(rating) + "?"     
-    }
+        }
 
     return JsonResponse(data)
 
-
+def players(request):
+    return render(request, 'players.html', )

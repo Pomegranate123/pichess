@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'home',
     'login',
     'channels',
+    'game',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'pichess.urls'
-ASGI_APPLICATION = 'pichess.routing.application'
+ASGI_APPLICATION = 'pichess.asgi.application'
 
 TEMPLATES = [
     {
@@ -123,4 +124,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGIN_REDIRECT_URL = "../register"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
+
