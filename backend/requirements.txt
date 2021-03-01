@@ -1,3 +1,8 @@
+Django
 channels
+<<<<<<< HEAD
 redis-channels
 redis
+=======
+gunicorn
+>>>>>>> 5e6b9b5f562b6d593ee560c70ee4b37ce6db1e78

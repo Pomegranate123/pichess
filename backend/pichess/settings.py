@@ -1,3 +1,7 @@
+import os
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 """
 Django settings for pichess project.
 
@@ -15,7 +19,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -25,7 +28,7 @@ SECRET_KEY = '10z^okb6etlc_7kfg9f*ow(v$#&u@i_oj(a7w#su%pm3ryyfj3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "api"]
 
 
 # Application definition
