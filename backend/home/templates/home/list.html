@@ -4,7 +4,7 @@
 
 	<body>
 		<script>
-			let socket = new WebSocket("wss://javascript.info/article/websocket/demo/hello");
+			let socket = new WebSocket("ws:/lobby/");
 
 			socket.onopen = function(e) {
 				alert("[open] Connection established");
@@ -26,9 +26,9 @@
   				}
 			};
 
-socket.onerror = function(error) {
-  alert(`[error] ${error.message}`);
-};
+			socket.onerror = function(error) {
+				alert(`[error] ${error.message}`);
+			};
 
 		</script>
 	</body>

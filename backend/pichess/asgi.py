@@ -1,4 +1,5 @@
 import os
+from django.urls import re_path, path
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
@@ -12,7 +13,7 @@ application = ProtocolTypeRouter({
   "websocket": AuthMiddlewareStack(
         URLRouter([
             re_path('ws/game/(?P<room_name>\w+)/$', game_consumers.GameConsumer.as_asgi()),
-            paht('lobby/', home_consumers.LobbyConsumers.as_asgi())
+            path('lobby/', home_consumers.LobbyConsumer.as_asgi())
             # game.routing.websocket_urlpatterns,
             # home.routing.websocket_urlpatterns
         ])
