@@ -12,7 +12,7 @@ def profile(request):
         data = {
             #'username': username,
             'rating': rating
-    }
+        }
     except:
         rating = "1500"
         certain = False
@@ -24,4 +24,4 @@ def profile(request):
     return JsonResponse(data)
 
 def players(request):
-    return render(request, 'players.html', )
+    return render(request, 'home/list.html', )
