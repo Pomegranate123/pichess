@@ -10,6 +10,7 @@ from .forms import PlayerForm
 
 
 def log_in(request):
+    received_json = json.loads(request.body)
     username = request.POST['username']
     password = request.POST['password']
     user = authenticate(request, username=username, password=password)
