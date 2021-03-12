@@ -1,3 +1,3 @@
 #!/bin/sh
 cd frontend
-npm run build && docker-compose build
+npm install && npm run build && docker-compose build
