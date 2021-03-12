@@ -9,6 +9,9 @@ To run, clone the repository and run `buildrun.sh`. The site will be available o
 # Dependencies
 
 `docker-compose`
+
 `npm`
+
 `python`
+
 probably some more, but I can't think of any more.
