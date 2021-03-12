@@ -1,10 +1,10 @@
 # pichess
 
-A free and open source chess application, an alternative to lichess.
+A free and open source chess website, an alternative to lichess. Made using Django and Vue.
 
 # Usage
 
-To run, clone the repository and run `buildrun.sh`. The site will be available on `localhost`
+To run, clone the repository and run `buildrun.sh`. The site will be available on `localhost`.
 
 # Dependencies
 
