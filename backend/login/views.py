@@ -6,22 +6,22 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .models import Player
 from .forms import PlayerForm
+import json
 # Create your views here.
 
 
 def log_in(request):
     received_json = json.loads(request.body)
-    username = request.POST['username']
-    password = request.POST['password']
+    username = received_json['username']
+    password = received_json['password']
     user = authenticate(request, username=username, password=password)
     if user is not None:
         login(request, user)
-        return redirect('../profile')
-    else:
-        return redirect('../../login')
+        return HttpResponse(status=200) # OK
+    return HttpResponse("Invalid username or password", status=400) # Bad Request
 
 def profile(request):
-    if User.is_authenticated:
+    if request.user.is_authenticated:
         USERNAME = request.user.username
         RATING = request.user.player.rating
 
@@ -39,7 +39,7 @@ def profile(request):
         }
         return JsonResponse(context)
     else:
-        return HttpResponse("LOGIN!")
+        return HttpResponse("User not logged in", status=400)
 
 def register(request):
     if request.method == 'POST':

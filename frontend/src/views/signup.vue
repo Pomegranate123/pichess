@@ -57,9 +57,10 @@ export default {
       }
     },
     signup() {
-      const data = {username: this.username, password: this.password}
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      const data = { 'password': this.password, 'username': this.username }
       this.axios
-        .post('http://localhost/api/accounts/register/', data)
+        .post('http://localhost/api/accounts/register/', data, headers)
         .then(() => {
           //this.$cookie.setCookie(this.user, auth)
           //this.redirect()
