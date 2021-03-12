@@ -48,8 +48,10 @@ export default {
   },
   methods: {
     login() {
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      const data = { 'password': this.password, 'username': this.username }
       this.axios
-        .get('http://localhost/api/login', { password: this.password, username: this.username})
+        .post('http://localhost/api/accounts/authenticate/', data, headers)
         .then(() => {
           //this.$cookie.setCookie(this.user, auth)
           //this.redirect()
