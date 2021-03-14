@@ -52,9 +52,11 @@ def register(request):
         # check username in database
         user = User.objects.create_user(
             received_data['username'],
-            'email',
             received_data['password']
         )
+
+        p = Player(request.user.id, rating=1500)
+        p.save()
 
         return HttpResponse(status=200)
 
