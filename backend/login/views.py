@@ -14,7 +14,8 @@ def log_in(request):
     received_json = json.loads(request.body)
     username = received_json['username']
     password = received_json['password']
-    user = authenticate(request, username=username, password=password)
+    print(username, password)
+    user = authenticate(username=username, password=password)
     if user is not None:
         login(request, user)
         return HttpResponse(status=200) # OK
@@ -23,7 +24,7 @@ def log_in(request):
 def profile(request):
     if request.user.is_authenticated:
         USERNAME = request.user.username
-        RATING = request.user.player.rating
+        RATING = request.user.email
 
         """
         if request.user.player.rating != NULL:
@@ -52,11 +53,9 @@ def register(request):
         # check username in database
         user = User.objects.create_user(
             received_data['username'],
+            '1500',
             received_data['password']
         )
-
-        p = Player(request.user.id, rating=1500)
-        p.save()
 
         return HttpResponse(status=200)
 
