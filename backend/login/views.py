@@ -51,17 +51,18 @@ def register(request):
             player = player_form.save(commit=False)
             player.user = user
             player.save()
-            return redirect('../../login/')
+            return HttpResponse(status=200)
 
     else:
         form = UserCreationForm()
         player_form = PlayerForm()
-
-
+        return HttpResponse("Method is not POST", status=400)
+    
+    """
     context = {
         'form': form,
         'player_form': player_form
     }
-    return render(request, 'login/register.html', context)
+    """
 
 
