@@ -43,41 +43,18 @@ def profile(request):
 
 def register(request):
     if request.method == 'POST':
-        """
-        form = UserCreationForm(request.POST)
-        print(form)
-        player_form = PlayerForm()
-        """
-
         received_data = json.loads(request.body)
+        username = received_data['username'].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            return HttpResponse("User bestaat al", status=400)
         
         # check username in database
         user = User.objects.create_user(
             received_data['username'],
+            'email',
             received_data['password']
         )
 
-        """
-        if form.is_valid():
-            user = form.save()
-            print(user)
-            player = player_form.save(commit=False)
-            player.user = user
-            player.save()
-            return HttpResponse(status=200)"""
-
-
-    else:
-        form = UserCreationForm()
-        player_form = PlayerForm()
-        # return HttpResponse("Method is not POST", status=400)
-    
-    
-    context = {
-        'form': form,
-        'player_form': player_form
-    }
-    
-    return render(request, "login/register.html", context)
-
+        return HttpResponse(status=200)
 
