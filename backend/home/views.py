@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import  User
+from django.core.cache import cache
+from .conf import online_status_settings as config
+
 
 # Create your views here.
 
@@ -24,4 +27,9 @@ def profile(request):
     return JsonResponse(data)
 
 def players(request):
-    return render(request, 'home/list.html', )
+
+    online_users = cache.get(config.CACHE_USERS)
+    return JsonResponse(
+        online_users, safe=False
+    )
+    # return render(request, 'home/list.html', )
