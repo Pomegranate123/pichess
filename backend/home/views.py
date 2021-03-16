@@ -29,7 +29,6 @@ def profile(request):
 def players(request):
 
     online_users = cache.get(config.CACHE_USERS)
-    print(online_users)
     return JsonResponse(
         online_users, safe=False
     )

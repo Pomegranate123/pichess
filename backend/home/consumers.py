@@ -28,7 +28,7 @@ class LobbyConsumer(AsyncConsumer):
         print(json.loads(event['text']))
         #event_json = json.loads(event['text'])
         await self.send({
-            'event': 'move',
+            'event': 'message',
             'type': 'websocket.send',
             'text': event['text'],
         })
