@@ -25,8 +25,5 @@ class LobbyConsumer(AsyncConsumer):
         #event_json = json.loads(event['text'])
         
     async def websocket_disconnect(self, event):
-        async_to_sync(self.channel_layer.group_discord)(
-            'lobby',
-            self.channel_name
-        )
+        pass
 
