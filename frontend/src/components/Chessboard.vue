@@ -132,6 +132,7 @@ export default {
       if (this.showThreats) {
         this.pointThreats()
       }
+
       let threats = this.countThreats(this.toColor()) || {}
       threats['history'] = this.game.history()
       threats['fen'] = this.game.fen()

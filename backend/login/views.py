@@ -48,7 +48,7 @@ def register(request):
         username = received_data['username'].lower()
         r = User.objects.filter(username=username)
         if r.count():
-            return HttpResponse("User bestaat al", status=400)
+            return HttpResponse("User exists", status=400)
         
         # check username in database
         user = User.objects.create_user(

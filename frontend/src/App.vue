@@ -18,21 +18,21 @@
 export default {
   data () {
     return {
-
+    ws: null
     } 
   },
   mounted () {
-    let ws = new WebSocket("ws://localhost/api/ws/lobby")
-    ws.onopen = function() {
+    this.ws = new WebSocket("ws://localhost/api/ws/lobby")
+    this.ws.onopen = function() {
       console.log("[open] Connected to websocket")
-      ws.send(`Verbonden`)
+      this.ws.send(`Verbonden`)
     }
 
-    ws.onmessage = function(event) {
+    this.ws.onmessage = function(event) {
       console.log(`[message] Data received from websocket: ${event.data}`)
     }
 
-    ws.onclose = function(event) {
+    this.ws.onclose = function(event) {
       if (event.wasClean) {
         console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
       } else {
@@ -40,7 +40,7 @@ export default {
       }
     }
 
-    ws.onerror = function(error) {
+    this.ws.onerror = function(error) {
       console.log(`[error] ${error.message}`)
     }
   }
