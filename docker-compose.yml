@@ -7,7 +7,7 @@ services:
     volumes:
       - ./backend:/backend
     working_dir: /backend
-    command: sh start.sh
+    command: python manage.py runserver 0:8000
     expose:
       - "8000"
   nginx:
