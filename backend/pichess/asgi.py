@@ -1,5 +1,6 @@
 import os
 from django.urls import re_path, path
+from django.conf.urls import url
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.core.asgi import get_asgi_application
@@ -10,10 +11,11 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pichess.settings')
 
 application = ProtocolTypeRouter({
   "http": get_asgi_application(),
-  "websocket": AuthMiddlewareStack(
+  'websocket': AuthMiddlewareStack (
         URLRouter([
-            re_path('/ws/api/ws/game/(?P<room_name>\w+)/$', game_consumers.GameConsumer.as_asgi()),
-            re_path('/ws/api/ws/lobby/', home_consumers.LobbyConsumer.as_asgi())
+            re_path('api/ws/game/(?P<room_name>\w+)/$', game_consumers.GameConsumer.as_asgi()),
+            #re_path('/api/ws/lobby/', home_consumers.LobbyConsumer.as_asgi())
+            re_path('api/ws/lobby', home_consumers.LobbyConsumer.as_asgi())
             # game.routing.websocket_urlpatterns,
             # home.routing.websocket_urlpatterns
         ])
