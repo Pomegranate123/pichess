@@ -1,20 +1,20 @@
 <template>
   <form>
-    <h1>Aanmelden</h1>
+    <h1>Sign up</h1>
     <div class=form-group>
-      <label for="username">Gebruikersnaam</label><br>
+      <label for="username">Username</label><br>
       <input type="text" v-model="username" id="username"/><br>
     </div>
     <div class=form-group>
-      <label for="password">Wachtwoord</label><br>
+      <label for="password">Password</label><br>
       <input type="password" v-model="password" id="password"/><br>
     </div>
     <div class=form-group>
-      <label for="passwordcheck">Wachtwoord herhalen</label><br>
+      <label for="passwordcheck">Repeat password</label><br>
       <input type="password" v-model="passwordcheck" id="passwordcheck"/><br>
     <span class="error">{{ message }}</span>   
     </div>
-    <button class="confirm" type="submit" :disabled="disable_button" v-on:click="signup">Aanmelden</button>
+    <button class="confirm" type="submit" :disabled="disable_button" v-on:click="signup">Sign up</button>
   </form>
 </template>
 
@@ -61,10 +61,7 @@ export default {
       const data = { 'password': this.password, 'username': this.username }
       this.axios
         .post('http://localhost/api/accounts/register/', data, headers)
-        .then(() => {
-          //this.$cookie.setCookie(this.user, auth)
-          //this.redirect()
-        })
+        .then(() => {})
         .catch(error => {
           this.used_username()
           console.log(error)
@@ -75,19 +72,6 @@ export default {
       this.passwordcheck = ''
       this.username = ''
       this.message = 'Gebruikersnaam is al in gebruik!'
-    },
-    redirect() {
-      if (this.$route.query.redirect === undefined) {
-        this.$router.push(this.user + '/game')
-      }
-      else {
-        this.$router.push(this.$route.query.redirect)
-      }
-    }
-  },
-  mounted() {
-    if (this.$cookie.isCookieAvailable(this.user)) {
-      this.redirect()
     }
   }
 }

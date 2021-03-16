@@ -5,6 +5,7 @@ from django.urls import include
 urlpatterns = [
     path('profile/', views.profile),
     path('register/', views.register),
-    path('authenticate/', views.log_in)
+    path('authenticate/', views.log_in),
+    path('logout/', views.log_out)
 ]
 

@@ -12,6 +12,7 @@
     "chess.js": "^0.11.0",
     "chessground": "^7.9.3",
     "core-js": "^3.6.5",
+    "upgrade": "^1.1.0",
     "vue": "^3.0.0",
     "vue-cookie-next": "^1.0.3",
     "vue-router": "^4.0.3"

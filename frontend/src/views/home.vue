@@ -26,6 +26,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.$parent)
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
       .get('http://localhost/api/home/players', headers)

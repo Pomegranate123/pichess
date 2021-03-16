@@ -112,6 +112,8 @@ export default {
     },
     changeTurn () {
       return (orig, dest) => {
+        let move = {"orig": orig, "dest": dest}
+        this.ws.send(JSON.stringify(move))
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion()
         }
@@ -192,6 +194,20 @@ export default {
   },
   mounted () {
     this.loadPosition()
+    console.log('chessboard')
+    console.log(this.ws)
+    this.ws.addEventListener('message', function (event) {
+      console.log(`[message] Data received from websocket: ${event.data}`)
+      console.log("Making move...")
+      let move = JSON.parse(event.data)
+      console.log(move)
+      this.game.move({from: move["orig"], to: move["dest"], promotion: this.promoteTo})
+      this.board.set({
+        fen: this.game.fen()
+      })
+      this.calculatePromotion()
+      this.afterMove()
+    })
   },
   created () {
     this.game = new Chess()

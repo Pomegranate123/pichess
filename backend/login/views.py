@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
 from .models import Player
@@ -17,9 +17,14 @@ def log_in(request):
     print(username, password)
     user = authenticate(username=username, password=password)
     if user is not None:
+        print("logged in")
         login(request, user)
         return HttpResponse(status=200) # OK
     return HttpResponse("Invalid username or password", status=400) # Bad Request
+
+def log_out(request):
+    logout(request)
+    return HttpResponse(status=200)
 
 def profile(request):
     if request.user.is_authenticated:

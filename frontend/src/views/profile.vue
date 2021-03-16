@@ -1,15 +1,31 @@
 <template>
-Profile
-Username: {{ username }}
-Rating: {{ rating }}
+<div v-if="loggedin">
+  Profile<br>
+  Username: {{ username }}<br>
+  Rating: {{ rating }}<br>
+  <button v-on:click="this.logout()">Uitloggen</button> 
+</div>
 </template>
 
 <script>
 export default {
   data () {
     return {
+      loggedin: false,
       rating: null,
       username: null,
+    }
+  },
+  methods: {
+    logout () {
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      this.axios
+        .get("http://localhost/api/accounts/logout", headers)
+        .then(() => {
+        })
+        .catch(error => {
+          console.log(error)
+        })
     }
   },
   mounted () {
@@ -17,13 +33,12 @@ export default {
     this.axios
       .get('http://localhost/api/accounts/profile/', headers)
       .then(response => {
+        this.loggedin = true
         this.username = response.data.username
         this.rating = response.data.rating
-        //this.$cookie.setCookie(this.user, auth)
-        //this.redirect()
       })
       .catch(error => {
-        this.used_username()
+        this.$router.push({ name: 'login' })
         console.log(error)
    })
   }

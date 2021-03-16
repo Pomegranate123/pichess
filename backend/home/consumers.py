@@ -4,6 +4,7 @@ from channels.layers import get_channel_layer
 from django.contrib.auth import get_user_model
 from channels.consumer import AsyncConsumer
 from channels.db import database_sync_to_async
+from channels.exceptions import StopConsumer
 from datetime import timedelta
 
 class LobbyConsumer(AsyncConsumer):
@@ -22,9 +23,17 @@ class LobbyConsumer(AsyncConsumer):
         #self.accept()
 
     async def websocket_receive(self, event):
+        print(event)
         print(event['text'])
+        print(json.loads(event['text']))
         #event_json = json.loads(event['text'])
+        await self.send({
+            'event': 'move',
+            'type': 'websocket.send',
+            'text': event['text'],
+        })
+
         
     async def websocket_disconnect(self, event):
-        pass
-
+        print("Disconnected", event)
+        raise StopConsumer

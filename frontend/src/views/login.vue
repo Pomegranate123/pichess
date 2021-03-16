@@ -1,18 +1,18 @@
 <template>
-  <form>
-    <h1>Inloggen</h1>
+  <form onsubmit="return false">
+    <h1>Log in</h1>
     <div class=form-group>
-      <label for="username">Gebruikersnaam</label><br>
+      <label for="username">Username</label><br>
       <input type="text" v-model="username" id="username"/><br>
     </div>
     <div class=from-group>
-      <label for="password">Wachtwoord</label><br>
+      <label for="password">Password</label><br>
       <input type="password" v-model="password" id="password"/><br>
       <span class=error>{{ errormsg }}</span><br>
     </div>
     <div class=form-group> 
-      <button class="confirm" type="submit" :disabled="disable_button" v-on:click="login">Login</button><br><br>
-      <router-link tag="a" :to="{ name: 'aanmelden', query: { redirect: this.$route.fullPath } }">Nog geen account?</router-link>
+      <button class="confirm" type="submit" :disabled="disable_button" v-on:click="login">Log in</button><br><br>
+      <router-link tag="a" :to="{ name: 'signup' }">No account yet?</router-link>
     </div>
   </form>
 </template>
@@ -53,30 +53,14 @@ export default {
       this.axios
         .post('http://localhost/api/accounts/authenticate/', data, headers)
         .then(() => {
-          //this.$cookie.setCookie(this.user, auth)
-          //this.redirect()
+          this.$router.push({ name: 'home' })
         })
         .catch(error => {
           console.log(error)
           this.wrong_info()
+          this.password = ''
+          this.errormsg = 'Inloggegevens verkeerd'
       })
-    },  
-    wrong_info() {
-      this.password = ''
-      this.errormsg = 'Inloggegevens verkeerd'
-    },
-    redirect() {
-      if (this.$route.query.redirect === undefined) {
-        this.$router.push({ name: 'game'})
-      }
-      else {
-        this.$router.push(this.$route.query.redirect)
-      }
-    },
-  },
-  mounted() {
-    if (this.$cookie.isCookieAvailable(this.user)) {
-      this.redirect()
     }
   }
 }

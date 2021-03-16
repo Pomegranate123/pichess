@@ -16,32 +16,29 @@
 
 <script>
 export default {
-  data () {
-    return {
-    ws: null
-    } 
-  },
   mounted () {
-    this.ws = new WebSocket("ws://localhost/api/ws/lobby")
-    this.ws.onopen = function() {
-      console.log("[open] Connected to websocket")
-      this.ws.send(`Verbonden`)
-    }
-
-    this.ws.onmessage = function(event) {
-      console.log(`[message] Data received from websocket: ${event.data}`)
-    }
-
-    this.ws.onclose = function(event) {
-      if (event.wasClean) {
-        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
-      } else {
-        console.log("[close] Connection died")
+    if (this.ws != undefined) {
+      this.ws.onopen = function() {
+        console.log("[open] Connected to websocket")
       }
-    }
 
-    this.ws.onerror = function(error) {
-      console.log(`[error] ${error.message}`)
+      this.ws.onmessage = function(event) {
+        console.log(event)
+        console.log(event['event'])
+        console.log(`[message] Data received from websocket: ${event.data}`)
+      }
+
+      this.ws.onclose = function(event) {
+        if (event.wasClean) {
+          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
+        } else {
+          console.log("[close] Connection died")
+        }
+      }
+
+      this.ws.onerror = function(error) {
+        console.log(`[error] ${error.message}`)
+      }
     }
   }
 }
