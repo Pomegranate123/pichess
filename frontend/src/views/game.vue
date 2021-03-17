@@ -1,5 +1,5 @@
 <template>
-  <chessboard></chessboard>
+  <chessboard ref="chess"></chessboard>
   <form onsubmit="return false">
     <input id="orig" v-model="orig" name="orig">
     <input id="dest" v-model="dest" name="dest">

@@ -23,8 +23,6 @@ export default {
       }
 
       this.ws.onmessage = function(event) {
-        console.log(event)
-        console.log(event['event'])
         console.log(`[message] Data received from websocket: ${event.data}`)
       }
 

@@ -191,23 +191,34 @@ export default {
       })
       this.afterMove()
     },
+    makeMove () {
+      return (event => {
+        console.log(`[message] Data received from websocket: ${event.data}`)
+        console.log("Making move...")
+        let move = JSON.parse(event.data)
+        console.log(move)
+        if (this.isPromotion(move["orig"], move["dest"])) {
+          this.promoteTo = this.onPromotion()
+        }
+        this.game.move({from: move["orig"], to: move["dest"], promotion: this.promoteTo})
+        this.board.set({
+          fen: this.game.fen(),
+          turnColor: this.toColor(),
+          movable: {
+            color: this.toColor(),
+            dests: this.possibleMoves(),
+          }
+        })
+        this.calculatePromotion()
+        this.afterMove()
+      })
+    }
   },
   mounted () {
     this.loadPosition()
     console.log('chessboard')
     console.log(this.ws)
-    this.ws.addEventListener('message', function (event) {
-      console.log(`[message] Data received from websocket: ${event.data}`)
-      console.log("Making move...")
-      let move = JSON.parse(event.data)
-      console.log(move)
-      this.game.move({from: move["orig"], to: move["dest"], promotion: this.promoteTo})
-      this.board.set({
-        fen: this.game.fen()
-      })
-      this.calculatePromotion()
-      this.afterMove()
-    })
+    this.ws.addEventListener('message', this.makeMove(event))
   },
   created () {
     this.game = new Chess()
