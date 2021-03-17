@@ -3,14 +3,33 @@ version: '3.9'
 services:
   backend:
     container_name: backend
-    build: ./backend
-    volumes:
-      - ./backend:/backend
-    working_dir: /backend
-    command: sh start.sh
+    extends:
+      file: python.yml
+      service: pythonenv
+    #build: ./backend
+        #working_dir: /backend
+    entrypoint: python manage.py runserver 0:8000
     expose:
       - "8000"
+  daphne:
+    container_name: daphne
+    extends:
+      file: python.yml
+      service: pythonenv
+    entrypoint: sh daphne.sh
+    expose:
       - "8001"
+    depends_on:
+      - backend
+#      - workers
+#  workers:
+#    container_name: workers
+#    extends:
+#      file: python.yml
+#      service: pythonenv
+#    entrypoint: sh workers.sh
+#    depends_on:
+#      - backend
   redis:
     container_name: redis
     restart: always

@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  pythonenv:
+    build: ./backend
+    volumes:
+      - ./backend:/backend
+    working_dir: /backend

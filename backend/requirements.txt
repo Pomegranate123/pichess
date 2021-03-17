@@ -2,3 +2,4 @@ Django
 channels
 channels-redis
 redis
+Twisted[tls, http2]
