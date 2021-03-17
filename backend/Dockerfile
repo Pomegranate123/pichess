@@ -5,3 +5,5 @@ WORKDIR /backend
 COPY requirements.txt /backend/
 RUN pip install -r requirements.txt
 COPY . /backend/
+RUN python manage.py migrate
+RUN daphne pichess.asgi:application

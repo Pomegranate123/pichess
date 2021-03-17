@@ -7,9 +7,16 @@ services:
     volumes:
       - ./backend:/backend
     working_dir: /backend
-    command: python manage.py runserver 0:8000
+    command: sh start.sh
     expose:
       - "8000"
+      - "8001"
+  redis:
+    container_name: redis
+    restart: always
+    image: redis
+    ports:
+      - "6379:6379"
   nginx:
     container_name: nginx
     image: nginx:latest
