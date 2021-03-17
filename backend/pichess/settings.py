@@ -28,7 +28,7 @@ SECRET_KEY = '10z^okb6etlc_7kfg9f*ow(v$#&u@i_oj(a7w#su%pm3ryyfj3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "api", "127.0.0.1"
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "api", "127.0.0.1", "pichess.hoste.info"
 ]
 
 
@@ -134,7 +134,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("192.168.0.46", 6379)],
+            "hosts": [("192.168.0.230", 6379)],
         },
     },
 }

@@ -20,7 +20,7 @@ export default {
     logout () {
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       this.axios
-        .get("http://localhost/api/accounts/logout", headers)
+        .get("/api/accounts/logout", headers)
         .then(() => {
         })
         .catch(error => {
@@ -31,7 +31,7 @@ export default {
   mounted () {
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
-      .get('http://localhost/api/accounts/profile/', headers)
+      .get('/api/accounts/profile/', headers)
       .then(response => {
         this.loggedin = true
         this.username = response.data.username

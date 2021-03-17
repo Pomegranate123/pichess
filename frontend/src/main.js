@@ -10,5 +10,6 @@ app.use(router)
 app.mount('#app')
 
 app.config.globalProperties.axios=axios
-app.config.globalProperties.ws=new WebSocket("ws://localhost/api/ws/lobby")
+let ws_scheme = window.location.protocol == "https:" ? "wss" : "ws"
+app.config.globalProperties.ws=new WebSocket(ws_scheme + "://" + window.location.host + "/ws/lobby")
 VueCookieNext.config({ expire: 0 })

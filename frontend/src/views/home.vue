@@ -29,7 +29,7 @@ export default {
     console.log(this.$parent)
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
-      .get('http://localhost/api/home/players', headers)
+      .get('/api/home/players', headers)
       .then((response) => {
         this.players = response.data
         //this.$cookie.setCookie(this.user, auth)

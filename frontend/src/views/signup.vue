@@ -60,7 +60,7 @@ export default {
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       const data = { 'password': this.password, 'username': this.username }
       this.axios
-        .post('http://localhost/api/accounts/register/', data, headers)
+        .post('/api/accounts/register/', data, headers)
         .then(() => {})
         .catch(error => {
           this.used_username()
