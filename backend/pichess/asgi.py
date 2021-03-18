@@ -19,8 +19,8 @@ application = ProtocolTypeRouter({
   "http": django_asgi_app,
   'websocket': AuthMiddlewareStack (
         URLRouter([
-            re_path('ws/game/(?P<room_name>\w+)/$', game_consumers.GameConsumer.as_asgi()),
-            re_path('ws/lobby', home_consumers.LobbyConsumer.as_asgi())
+            re_path('wss/game/(?P<room_name>\w+)/$', game_consumers.GameConsumer.as_asgi()),
+            re_path('wss/lobby', home_consumers.LobbyConsumer.as_asgi())
         ])
     ),
 })
