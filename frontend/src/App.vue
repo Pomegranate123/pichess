@@ -17,6 +17,7 @@
 <script>
 export default {
   mounted () {
+    this.$cookie.removeCookie('csrftoken')
     if (this.ws != undefined) {
       this.ws.onopen = function() {
         console.log("[open] Connected to websocket")
