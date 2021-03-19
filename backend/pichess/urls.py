@@ -20,8 +20,7 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
-    path('api/', include("home.urls")),
-    path('api/login', auth_views.LoginView),
+    path('api/login/', auth_views.LoginView),
     # path('api/', include("django.contrib.auth.urls")),
     path('api/accounts/', include('login.urls')),
     path('api/game/', include('game.urls')),
