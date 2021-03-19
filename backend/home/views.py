@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import  User
 from django.core.cache import cache
-from .conf import online_status_settings as config
 
 
 # Create your views here.
@@ -10,26 +9,33 @@ from .conf import online_status_settings as config
 def profile(request):
     username = request.user
     try:
-        rating = Users.objects.filter(username=username).values("rating")
+        rating = User.objects.filter(username=username).values("email")[0]['email']
         certain = True
         data = {
             #'username': username,
-            'rating': rating
+            'rating': rating,
+            'online': request.user.online_check()
         }
+        return JsonResponse(data)
     except:
         rating = "1500"
         certain = False
         data = {
             #'username': username,
-            'rating': str(rating) + "?"     
+            'rating': str(rating) + "?",
+            'online': request.user.online_check()
         }
-
-    return JsonResponse(data)
+        return JsonResponse(data)
 
 def players(request):
+    all_users = User.objects.all()
+    online_players = []
+    for user in all_users:
+        if user.online_check():
+            online_players.append(user.username)
 
-    online_users = cache.get(config.CACHE_USERS)
-    return JsonResponse(
-        online_users, safe=False
-    )
+    online_list = {'online_players': online_players}
+
+    return JsonResponse(online_list)
+    
     # return render(request, 'home/list.html', )
