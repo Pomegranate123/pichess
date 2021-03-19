@@ -2,8 +2,7 @@
   <header>
     <nav>
       <ol>
-        <router-link tag="li" id="menu-item" :to="{name: 'home'}">Home</router-link>
-        <router-link tag="li" id="menu-item" :to="{name: 'game'}">Play</router-link> 
+        <router-link tag="li" id="menu-item" :to="{name: 'play'}">Play</router-link>
         <router-link tag="li" id="menu-item" :to="{name: 'profile'}">Profile</router-link> 
         <router-link tag="li" id="menu-item" :to="{name: 'help'}">Help</router-link> 
       </ol>
@@ -17,28 +16,6 @@
 <script>
 export default {
   mounted () {
-    this.$cookie.removeCookie('csrftoken')
-    if (this.ws != undefined) {
-      this.ws.onopen = function() {
-        console.log("[open] Connected to websocket")
-      }
-
-      this.ws.onmessage = function(event) {
-        console.log(`[message] Data received from websocket: ${event.data}`)
-      }
-
-      this.ws.onclose = function(event) {
-        if (event.wasClean) {
-          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
-        } else {
-          console.log("[close] Connection died")
-        }
-      }
-
-      this.ws.onerror = function(error) {
-        console.log(`[error] ${error.message}`)
-      }
-    }
   }
 }
 

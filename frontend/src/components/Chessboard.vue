@@ -12,6 +12,9 @@ export default {
   name: 'chessboard',
   data () {
     return {
+      websocket: null,
+      white: this.$route.params.white,
+      black: this.$route.params.black,
       fen: this.fen_prop,
       free: this.free_prop,
       showThreats: this.showThreats_prop,
@@ -20,6 +23,14 @@ export default {
     }
   },
   props: {
+    white_prop: {
+      type: String,
+      default: '',
+    },
+    black_prop: {
+      type: String,
+      default: '',
+    },
     fen_prop: {
       type: String,
       default: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR',
@@ -113,7 +124,7 @@ export default {
     changeTurn () {
       return (orig, dest) => {
         let move = {"orig": orig, "dest": dest}
-        this.ws.send(JSON.stringify(move))
+        this.websocket.send(JSON.stringify(move))
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion()
         }
@@ -216,9 +227,29 @@ export default {
   },
   mounted () {
     this.loadPosition()
-    console.log('chessboard')
-    console.log(this.ws)
-    this.ws.addEventListener('message', this.makeMove(event))
+    this.websocket = new WebSocket("ws://" + window.location.host + "/wss/game/" + this.white + "/" + this.black)
+    if (this.websocket != undefined) {
+      this.websocket.onopen = function() {
+        console.log("[open] Connected to websocket")
+      }
+
+      this.websocket.onmessage = function(event) {
+        console.log(`[message] Data received from websocket: ${event.data}`)
+      }
+
+      this.websocket.onclose = function(event) {
+        if (event.wasClean) {
+          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
+        } else {
+          console.log("[close] Connection died")
+        }
+      }
+
+      this.websocket.onerror = function(error) {
+        console.log(`[error] ${error.message}`)
+      }
+    }
+    this.websocket.addEventListener('message', this.makeMove(event))
   },
   created () {
     this.game = new Chess()
@@ -235,6 +266,7 @@ export default {
   height: 320px;
   position: relative;
   display: block;
+  margin: 0 auto 0 auto;
 }
 cg-board {
   position: absolute;
