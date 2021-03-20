@@ -247,23 +247,23 @@ export default {
     this.websocket = new WebSocket("ws://" + window.location.host + "/wss/game/" + this.white + "/" + this.black)
     if (this.websocket != undefined) {
       this.websocket.onopen = function() {
-        console.log("[open] Connected to websocket")
+        console.log("<game> [open] Connected to websocket")
       }
 
       this.websocket.onmessage = function(event) {
-        console.log(`[message] Data received from websocket: ${event.data}`)
+        console.log(`<game> [message] Data received from websocket: ${event.data}`)
       }
 
       this.websocket.onclose = function(event) {
         if (event.wasClean) {
-          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
+          console.log(`<game> [close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
         } else {
-          console.log("[close] Connection died")
+          console.log("<game> [close] Connection died")
         }
       }
 
       this.websocket.onerror = function(error) {
-        console.log(`[error] ${error.message}`)
+        console.log(`<game> [error] ${error.message}`)
       }
     }
     this.websocket.addEventListener('message', this.makeMove(event))

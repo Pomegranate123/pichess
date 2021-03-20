@@ -10,5 +10,5 @@ app.use(router)
 app.mount('#app')
 
 app.config.globalProperties.axios=axios
-//app.config.globalProperties.ws=new WebSocket("ws://" + window.location.host + "/wss/lobby")
+app.config.globalProperties.ws=new WebSocket("ws://" + window.location.host + "/wss/lobby")
 VueCookieNext.config({ expire: 0 })

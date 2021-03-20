@@ -16,6 +16,27 @@
 <script>
 export default {
   mounted () {
+    if (this.ws != undefined) {
+      this.ws.onopen = function() {
+        console.log("<lobby> [open] Connected to websocket")
+      }
+
+      this.ws.onmessage = function(event) {
+        console.log(`<lobby> [message] Data received from websocket: ${event.data}`)
+      }
+
+      this.ws.onclose = function(event) {
+        if (event.wasClean) {
+          console.log(`<lobby> [close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
+        } else {
+          console.log("<lobby> [close] Connection died")
+        }
+      }
+
+      this.ws.onerror = function(error) {
+        console.log(`<lobby> [error] ${error.message}`)
+      }
+    }
   }
 }
 
