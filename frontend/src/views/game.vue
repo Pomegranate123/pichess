@@ -6,15 +6,18 @@
     <chessboard id="chess"></chessboard>
     <div class="name">{{ this.username }}</div><div class="rating">{{ this.rating }}</div>
   </div>
+  <chat/>
 
 </template>
 
 <script>
-import chessboard from '../components/Chessboard.vue'
+import chessboard from '../components/chessboard.vue'
+import chat from '../components/chat.vue'
 
 export default {
   components: {
-    chessboard
+    chessboard,
+    chat
   },
   data () {
     return {

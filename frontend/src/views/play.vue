@@ -12,6 +12,7 @@
     <br>
     <button class="confirm" type="submit" v-on:click="getLink">Get link</button>
 
+    {{ players }}
   </form>
 </template>
 
@@ -25,6 +26,7 @@ export default {
       black: null,
       opponent: null,
       username: null,
+      players: null,
     }
   },
   methods: {
@@ -52,6 +54,14 @@ export default {
       .get('/api/accounts/profile', headers)
       .then((response) => {
         this.username = response.data.username
+      })
+      .catch(error => {
+        console.log(error)
+    })
+    this.axios
+      .get('/api/home/players', headers)
+      .then((response) => {
+        this.players = response.data
       })
       .catch(error => {
         console.log(error)
