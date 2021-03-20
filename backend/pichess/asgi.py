@@ -2,8 +2,6 @@ import os
 from django.conf.urls import url
 from django.core.asgi import get_asgi_application
 from django.urls import re_path, path
-
-
 import game.consumers as game_consumers
 import home.consumers as home_consumers
 from channels.routing import ProtocolTypeRouter, URLRouter

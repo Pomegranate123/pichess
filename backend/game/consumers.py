@@ -22,7 +22,7 @@ class GameConsumer(AsyncConsumer):
         await self.send({
             "type": "websocket.accept",
         })
-        
+
         """
         board_obj = await self.get_board(me, opponent)
         game_room = "UNIQUE_NAME"
@@ -38,13 +38,14 @@ class GameConsumer(AsyncConsumer):
         """
 
     async def websocket_receive(self, event):
-        # event_json = json.loads(event)
-        # print("Channel layer is: " + str(channel_layer))
+        event_json = json.loads(event['text'])
+        print(event_json)
+
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                     'type': 'make_move',
-                    'move': event
+                    'text': event['text']
             }
         )
         
@@ -64,11 +65,13 @@ class GameConsumer(AsyncConsumer):
         """ 
 
     async def make_move(self, event):
+        print("making move")
         await self.send({
+            "event": "message",
             "type": "websocket.send",
-            "move": event['move']
+            "text": event['text']
         })
-        print(event['move'])
+        print(event['text'])
 
 
     async def websocket_disconnect(self, event):

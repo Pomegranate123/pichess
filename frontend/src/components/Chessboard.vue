@@ -127,7 +127,6 @@ export default {
       return (orig, dest) => {
         let move = {"orig": orig, "dest": dest}
         this.websocket.send(JSON.stringify(move))
-        console.log("Sent to websocket: " + JSON.stringify(move))
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion()
         }
@@ -136,7 +135,6 @@ export default {
           fen: this.game.fen(),
           turnColor: this.toColor(),
           movable: {
-            color: this.color, //this.color
             dests: this.possibleMoves(),
           }
         })
@@ -199,6 +197,9 @@ export default {
           dests: this.possibleMoves(),
         },
         orientation: this.orientation,
+        premovable: {
+          enabled: false
+        }
       })
       this.board.set({
         movable: { events: { after: this.changeTurn() } },
@@ -207,10 +208,7 @@ export default {
     },
     makeMove () {
       return (event => {
-        console.log(`[message] Data received from websocket: ${event.data}`)
-        console.log("Making move...")
         let move = JSON.parse(event.data)
-        console.log(move)
         if (this.isPromotion(move["orig"], move["dest"])) {
           this.promoteTo = this.onPromotion()
         }
@@ -218,8 +216,8 @@ export default {
         this.board.set({
           fen: this.game.fen(),
           turnColor: this.toColor(),
+          lastMove: [move["orig"], move["dest"]],
           movable: {
-            color: this.toColor(),
             dests: this.possibleMoves(),
           }
         })
@@ -240,7 +238,6 @@ export default {
           this.color = "black"
         }
         this.orientation = this.color
-        console.log(this.color)
         this.loadPosition()
       })
       .catch(error => {
