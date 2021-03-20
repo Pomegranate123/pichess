@@ -35,6 +35,19 @@ class LobbyConsumer(AsyncConsumer):
 
     async def websocket_receive(self, event):
         sync_to_async(presence.objects.touch)(self.channel_name)
+        
+        await self.channel_layer.group_send(
+            "online",
+            {
+                "type": "send_challenge",
+                "text": event
+            }
+
+    async def send_challenge(self, event):
+        self.send({
+            "type": "websocket.send",
+            "text": event
+        })
 
     async def send_update(self, event):
         self.send({
@@ -58,4 +71,6 @@ class LobbyConsumer(AsyncConsumer):
             "online",
             self.channel_name
         )
- 
+
+
+
