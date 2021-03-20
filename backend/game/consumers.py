@@ -30,8 +30,7 @@ class GameConsumer(AsyncConsumer):
             {
                     'type': 'make_move',
                     'text': event['text']
-            }
-        )
+            })
         
          
 
@@ -53,7 +52,7 @@ class GameConsumer(AsyncConsumer):
         )
 
 class ChatConsumer(AsyncConsumer):
-    async def websocket_connect():
+    async def websocket_connect(self, event):
         print("connected", event)
         
         # [white player name][black player name]
@@ -71,7 +70,7 @@ class ChatConsumer(AsyncConsumer):
 
 
 
-    async def websocket_receive():
+    async def websocket_receive(self, event):
         event_json = json.loads(event['text'])
 
         await self.channel_layer.group_send(
@@ -79,8 +78,7 @@ class ChatConsumer(AsyncConsumer):
             {
                     'type': 'send_message',
                     'text': event['text']
-            }
-        )
+            })
 
     async def send_message(self, event):
         await self.send({
