@@ -20,7 +20,7 @@ application = ProtocolTypeRouter({
         URLRouter([
             url(r"^wss/game/(?P<white_player>[\w.@+-]+)/(?P<black_player>[\w.@+-]+)", game_consumers.GameConsumer.as_asgi()),
             #re_path(r'^wss/game/(?P<player_white>\w+)/(?P<player_black>\w+)/$', game_consumers.GameConsumer.as_asgi()),
-            #re_path('wss/lobby', home_consumers.LobbyConsumer.as_asgi())
+            url("wss/lobby", home_consumers.LobbyConsumer.as_asgi())
         ])
     ),
 })

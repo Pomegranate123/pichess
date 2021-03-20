@@ -3,3 +3,4 @@ channels
 channels-redis
 redis
 Twisted[tls, http2]
+django-channels-presence

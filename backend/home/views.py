@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.models import  User
 from django.core.cache import cache
+from channels_presence.models import Room
 
 
 # Create your views here.
@@ -28,14 +29,8 @@ def profile(request):
         return JsonResponse(data)
 
 def players(request):
-    all_users = User.objects.all()
-    online_players = []
-    for user in all_users:
-        if user.online_check():
-            online_players.append(user.username)
-
-    online_list = {'online_players': online_players}
-
-    return JsonResponse(online_list)
-    
-    # return render(request, 'home/list.html', )
+     online_players = Room.get_users() 
+     data = {
+        'online_players': online_players
+     }
+     return JsonResponse(data)

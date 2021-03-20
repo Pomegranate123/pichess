@@ -1,39 +1,18 @@
-import asyncio
 import json
-from channels.layers import get_channel_layer
-from django.contrib.auth import get_user_model
-from channels.consumer import AsyncConsumer
-from channels.db import database_sync_to_async
 from channels.exceptions import StopConsumer
-from datetime import timedelta
+from channels.generic.websocket import WebsocketConsumer
+from channels_presence.models import Presence
+from channels_presence.models import Room
 
-class LobbyConsumer(AsyncConsumer):
-    async def websocket_connect(self, event):
-        channel_layer = get_channel_layer()
-        print("connected", event)
-        await self.send({
-            'type': 'websocket.accept'
-        })
+class LobbyConsumer(WebsocketConsumer):
+    def connect(self):
+        super().connect()
+        Room.objects.add("online", self.channel_name, self.scope["user"])
         
-        await self.channel_layer.group_add(
-            'lobby',
-            self.channel_name
-        )        
-        
-        #self.accept()
 
-    async def websocket_receive(self, event):
-        print(event)
-        print(event['text'])
-        print(json.loads(event['text']))
-        #event_json = json.loads(event['text'])
-        await self.send({
-            'event': 'message',
-            'type': 'websocket.send',
-            'text': event['text'],
-        })
-
+    def receive(self, close_code):
+        presence.objects.touch(self.channel_name) 
         
-    async def websocket_disconnect(self, event):
-        print("Disconnected", event)
-        raise StopConsumer
+    def disconnect(self):
+        Room.objects.remove("online", self.channel_name)
+        

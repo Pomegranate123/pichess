@@ -28,7 +28,7 @@ SECRET_KEY = '10z^okb6etlc_7kfg9f*ow(v$#&u@i_oj(a7w#su%pm3ryyfj3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost", "api", "127.0.0.1", "pichess.hoste.info", "192.168.0.45"
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "api", "127.0.0.1", "pichess.hoste.info", "192.168.0.45", "192.168.0.123",
 ]
 
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'login',
     'channels',
     'game',
+    'channels_presence',
     # 'online_status',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -46,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
 ]
 
 MIDDLEWARE = [
