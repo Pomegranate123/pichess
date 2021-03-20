@@ -6,7 +6,7 @@
     </div>
     <div class="body">
       <div class="table">
-        <div class="chat-log">
+        <div id="chat-log" class="chat-log">
           <div v-for="(message, index) in history" :key="index" class="bubble">
             <div class="msg me" v-if="message.user === username">
               {{message.msg}}
@@ -31,6 +31,11 @@
 </template>
 
 <script>
+function scrollBottom() {
+  let container = this.$el.querySelector("#chat-log")
+  container.scrollTop = container.scrollHeight
+}
+
 export default {
   name: "chat",
   data () {
@@ -40,30 +45,7 @@ export default {
       username: "test",
       white: this.$route.params.white,
       black: this.$route.params.black,
-      history: [
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "elias", "msg": "heel erg lang bericht van elias hij moet echt een keer zijn mond houden want ik hou er helemaal niet van als ik de hele tijd naar hem moet luisteren. Ik hoop dat dit berichtje niet buiten de marges van de chatcontainer valt, want anders moet ik weer dingen gaan oplossen..."}, 
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "elias", "msg": "testbericht elias"}, 
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      {"user": "izzy", "msg": "Testbericht izzy"},
-      ],
+      history: [],
     }
   },
   methods: {
@@ -82,9 +64,10 @@ export default {
     addMessage() {
       return (event => {
         let message = JSON.parse(event.data)
-        history.push(message)
+        this.history.push(message)
+        this.$nextTick(scrollBottom)
       })
-    }
+    },
   },
   mounted () {
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
@@ -114,8 +97,9 @@ export default {
           console.log("<chat> [close] Connection died")
         }
       }
-      this.websocket.addEventListener('message', this.addMessage(event))
+      this.chat.addEventListener('message', this.addMessage(event))
     }
+    this.$nextTick(scrollBottom)
   },
 }
 </script>
@@ -130,7 +114,7 @@ export default {
 
 .chat-log {
   display: block;
-  height: 320px;
+  height: 340px;
   width: 100%;
   padding: 2% 4%;
   box-sizing: border-box;
@@ -164,14 +148,14 @@ export default {
 }
 
 .message-input {
-  display: table-row;
-  width: 320px;
-  height: 26px;
+  width: 314px;
+  height: 30px;
+  padding: 5px 3px;
 }
 
 textarea {
-  width: 98%;
   height: 30px;
+  width: 98%;
   padding: 0 5px;
   margin: 0;
   box-sizing: border-box;
@@ -181,6 +165,6 @@ textarea {
   font-size: 14px;
   border: solid 1px #AAAAAA;
   border-radius: 3px;
-  font-family: Helvetica;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
 }
 </style>

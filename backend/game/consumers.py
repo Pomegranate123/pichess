@@ -11,7 +11,7 @@ class GameConsumer(AsyncConsumer):
         # [white player name][black player name]
         self.white_player = self.scope['url_route']['kwargs']['white_player']  
         self.black_player = self.scope['url_route']['kwargs']['black_player'] 
-        self.room_group_name = self.white_player + self.black_player
+        self.room_group_name = "game" + self.white_player + self.black_player
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
@@ -57,7 +57,7 @@ class ChatConsumer(AsyncConsumer):
         # [white player name][black player name]
         self.white_player = self.scope['url_route']['kwargs']['white_player']  
         self.black_player = self.scope['url_route']['kwargs']['black_player'] 
-        self.room_group_name = self.white_player + self.black_player
+        self.room_group_name = "chat" + self.white_player + self.black_player
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name

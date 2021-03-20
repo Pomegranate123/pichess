@@ -10,7 +10,7 @@
     <input id="black" type="radio" v-model="color" name="color" value="black">
     <label for="black">Black</label><br>
     <br>
-    <button class="confirm" type="submit" v-on:click="getLink">Get link</button>
+    <button class="confirm" type="submit" v-on:click="getLink">Copy link</button>
 
     {{ players }}
   </form>
@@ -18,7 +18,6 @@
 
 <script>
 export default {
-  name: 'klastabel',
   data () {
     return {
       color: "white",

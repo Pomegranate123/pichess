@@ -1,11 +1,11 @@
 <template>
   <div class="boardcontainer">
     <div class="name" v-if="this.black === this.username">{{ this.white }}</div>
-    <div class="name" v-else>{{ this.black }}</div>
+    <div class="name" v-else>{{ this.black }}</div><div class="clock">{{opponentclock}}</div>
     <div class='blue merida'>
       <div ref="board" class="cg-board-wrap"></div><br>
     </div>
-    <div class="name">{{ this.username }}</div>
+    <div class="name">{{ this.username }}</div><div class="clock">{{clock}}</div>
   </div>
 </template>
 
@@ -17,6 +17,15 @@ export default {
   name: 'chessboard',
   data () {
     return {
+      timecontrol: 600000,
+      movecolor: null,
+      date: new Date().getTime(),
+      firstmove: true,
+      opponentfirstmove: true,
+      lastdate: Date.now(),
+      opponentlastdate: Date.now(),
+      time: Date.now() + 600000,
+      opponenttime: Date.now() + 600000,
       websocket: null,
       username: null,
       color: null,
@@ -143,6 +152,7 @@ export default {
             dests: this.possibleMoves(),
           }
         })
+
         this.calculatePromotion()
         this.afterMove()
       }
@@ -228,7 +238,33 @@ export default {
         })
         this.calculatePromotion()
         this.afterMove()
+        this.changeClock()
       })
+    },
+    changeClock () {
+      if (this.color === this.toColor()) {
+        if (this.opponentfirstmove) {
+          this.opponentlastdate = Date.now()
+          this.opponenttime = this.opponentlastdate + this.timecontrol
+          this.lastdate = Date.now()
+          this.time = this.lastdate + this.timecontrol
+          this.opponentfirstmove = false
+        } else {
+          this.opponentlastdate = Date.now()
+          this.time = this.time - this.lastdate + Date.now()
+        }
+      } else {
+        if (this.firstmove) {
+          this.opponentlastdate = Date.now()
+          this.opponenttime = this.opponentlastdate + this.timecontrol
+          this.lastdate = Date.now()
+          this.time = this.lastdate + this.timecontrol
+          this.firstmove = false
+        } else {
+          this.lastdate = Date.now()
+          this.opponenttime = this.opponenttime - this.opponentlastdate + Date.now()
+        }
+      }
     }
   },
   mounted () {
@@ -272,6 +308,36 @@ export default {
       }
     }
     this.websocket.addEventListener('message', this.makeMove(event))
+    setInterval(() => {
+      this.date = new Date().getTime()
+    })
+    setInterval(() => {
+      this.moveColor = this.toColor()
+    })
+  },
+  computed: {
+    clock: function () {
+      let timeleft = this.time - this.date
+      if (!((this.moveColor === this.color) && (!this.firstmove))) {
+        timeleft = this.time - this.lastdate
+      }
+      let secondsleft = Math.floor((timeleft / 1000) % 60)
+      secondsleft = secondsleft.toString().padStart(2, "0")
+      let minutesleft = Math.floor(timeleft / 60000)
+      minutesleft = minutesleft.toString().padStart(2, "0")
+      return minutesleft + ":" + secondsleft
+    },
+    opponentclock: function () {
+      let timeleft = this.opponenttime - this.date
+      if (!((this.moveColor != this.color) && (!this.opponentfirstmove))) {
+        timeleft = this.opponenttime - this.opponentlastdate
+      }
+      let secondsleft = Math.floor((timeleft / 1000) % 60)
+      secondsleft = secondsleft.toString().padStart(2, "0")
+      let minutesleft = Math.floor(timeleft / 60000)
+      minutesleft = minutesleft.toString().padStart(2, "0")
+      return minutesleft + ":" + secondsleft
+    }
   },
   created () {
     this.game = new Chess()
@@ -291,9 +357,16 @@ export default {
 }
 
 .name {
-  height: 30px;
+  height: 20px;
   padding: 5px 5px 5px 5px;
   text-align: left;
+  float: left;
+}
+
+.clock {
+  height: 20px;
+  padding: 5px 5px 5px 5px;
+  float: right;
 }
 
 .cg-board-wrap {
@@ -301,7 +374,7 @@ export default {
   height: 320px;
   position: relative;
   display: block;
-  margin: 0 auto 0 auto;
+  margin: 45px auto 0 auto;
 }
 cg-board {
   position: absolute;
