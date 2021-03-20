@@ -22,15 +22,14 @@ class GameConsumer(AsyncConsumer):
         })
 
     async def websocket_receive(self, event):
-        event_json = json.loads(event['text'])
-        print(event_json)
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                     'type': 'make_move',
                     'text': event['text']
-            })
+            }
+        )
         
          
 
@@ -71,23 +70,26 @@ class ChatConsumer(AsyncConsumer):
 
 
     async def websocket_receive(self, event):
-        event_json = json.loads(event['text'])
 
         await self.channel_layer.group_send(
             self.room_group_name,
             {
-                    'type': 'send_message',
+                    'type': 'make_move',
                     'text': event['text']
-            })
+            }
+        )
+        
+         
 
-    async def send_message(self, event):
+    async def make_move(self, event):
         await self.send({
             "event": "message",
             "type": "websocket.send",
             "text": event['text']
         })
+        
 
-    async def websocket_disconnect():
+    async def websocket_disconnect(self, event):
         print("disconnected", event)
         
         self.channel_layer.group_discard(
