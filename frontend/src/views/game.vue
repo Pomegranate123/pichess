@@ -1,12 +1,8 @@
 <template>
-  <div class="namecontainer">
-    <div class="name" v-if="this.black === this.username">{{ this.white }}</div>
-    <div class="name" v-else>{{ this.black }}</div>
-    <br>
-    <chessboard id="chess"></chessboard>
-    <div class="name">{{ this.username }}</div><div class="rating">{{ this.rating }}</div>
+  <div class="gamecontainer">
+    <chessboard id="board"/>
+    <chat id="chat"/>
   </div>
-  <chat/>
 
 </template>
 
@@ -43,26 +39,16 @@ export default {
 </script>
 
 <style>
-#chess {
-  margin-top: 20px;
-}
-
-.namecontainer {
-  width: 320px;
-  height: 420px;
-  background: var(--lightgrey);
+.gamecontainer {
+  width: 680px;
   margin: 0 auto 0 auto;
 }
 
-.name {
-  height: 40px;
-  padding: 5px 5px 5px 5px;
+#board {
   float: left;
 }
 
-.rating {
-  height: 40px;
-  padding: 5px 5px 5px 5px;
-  float: right;
+#chat {
+  float: left;
 }
 </style>

@@ -1,6 +1,11 @@
 <template>
-  <div class='blue merida'>
-    <div ref="board" class="cg-board-wrap"></div><br>
+  <div class="boardcontainer">
+    <div class="name" v-if="this.black === this.username">{{ this.white }}</div>
+    <div class="name" v-else>{{ this.black }}</div>
+    <div class='blue merida'>
+      <div ref="board" class="cg-board-wrap"></div><br>
+    </div>
+    <div class="name">{{ this.username }}</div>
   </div>
 </template>
 
@@ -278,6 +283,19 @@ export default {
 </script>
 
 <style>
+.boardcontainer {
+  width: 320px;
+  height: 420px;
+  background: var(--lightgrey);
+  margin: 0 10px 0 10px;
+}
+
+.name {
+  height: 30px;
+  padding: 5px 5px 5px 5px;
+  text-align: left;
+}
+
 .cg-board-wrap {
   width: 320px;
   height: 320px;

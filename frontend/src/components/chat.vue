@@ -1,11 +1,21 @@
 <template>
-  <div class="chat-container">
+  <div class="chatcontainer">
     <div class="heading">
       <div class="name" v-if="black === username">Chat with {{ white }}</div>
       <div class="name" v-else>Chat with {{ black }}</div>
     </div>
     <div class="body">
       <div class="table">
+        <div class="chat-log">
+          <div v-for="(message, index) in history" :key="index" class="bubble">
+            <div class="me" v-if="message.user === username">
+              {{message.msg}}
+            </div>
+            <div class="notme" v-else>
+              {{message.msg}}
+            </div>
+          </div>
+        </div>
         <div class="message-input">
           <textarea
           v-model="message"
@@ -29,6 +39,7 @@ export default {
       username: null,
       white: this.$route.params.white,
       black: this.$route.params.black,
+      history: [],
     }
   },
   methods: {
@@ -56,17 +67,45 @@ export default {
       .catch(error => {
         console.log(error)
     })
-
-  }
+  },
 }
 </script>
 
 <style scoped>
+.chatcontainer {
+  width: 320px;
+  height: 420px;
+  background: var(--lightgrey);
+  margin: 0 10px 0 10px;
+}
+
+.chat-log {
+  display: block;
+  height: inherit;
+  width: 100%;
+  padding: 2% 4%;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+.chat-log::-webkit-scrollbar {
+  display: none;
+}
+
+.me {
+  float: right;
+}
+
+.notme {
+  float: left;
+}
+
 .message-input {
   display: table-row;
-  width: 100%;
+  width: 320px;
   height: 26px;
 }
+
 textarea {
   width: 98%;
   height: 30px;
