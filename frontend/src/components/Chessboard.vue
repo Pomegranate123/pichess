@@ -14,6 +14,7 @@ export default {
     return {
       websocket: null,
       username: null,
+      color: null,
       white: this.$route.params.white,
       black: this.$route.params.black,
       fen: this.fen_prop,
@@ -134,7 +135,7 @@ export default {
           fen: this.game.fen(),
           turnColor: this.toColor(),
           movable: {
-            color: this.toColor(),
+            color: this.color,
             dests: this.possibleMoves(),
           }
         })
@@ -192,7 +193,7 @@ export default {
         fen: this.game.fen(),
         turnColor: this.toColor(),
         movable: {
-          color: this.toColor(),
+          color: this.color,
           free: this.free,
           dests: this.possibleMoves(),
         },
@@ -227,16 +228,19 @@ export default {
     }
   },
   mounted () {
-    this.loadPosition()
-
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
       .get('/api/accounts/profile/', headers)
       .then(response => {
         this.username = response.data.username
-        if (this.username === this.black) {
-          this.orientation = 'black'
+        if (this.username === this.white) {
+          this.color = "white"
+        } else {
+          this.color = "black"
         }
+        this.orientation = this.color
+        console.log(this.color)
+        this.loadPosition()
       })
       .catch(error => {
         console.log(error)
