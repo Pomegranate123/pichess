@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.contrib.auth.models import  User
 from django.core.cache import cache
 from channels_presence.models import Room
+import json
 
 
 # Create your views here.
@@ -29,8 +30,20 @@ def profile(request):
         return JsonResponse(data)
 
 def players(request):
-     online_players = Room.get_users() 
+    users = list(Room.get_users(1).values())
+    online_list = []
+    for i, user in enumerate(users):
+        online_list.append(users[i]["username"])
+
+    data = {
+        'online': online_list
+    }
+    return JsonResponse(data)
+
+    """
+     users = room.get_users() 
      data = {
         'online_players': online_players
      }
      return JsonResponse(data)
+     """
