@@ -7,20 +7,21 @@ from channels.db import database_sync_to_async
 class GameConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         print("connected", event)
-        await self.send({
-            "type": "websocket.accept"
-        })
         
         # [white player name][black player name]
-        self.room_name = self.scope['url_route']['kwargs']['room_name']       
-        self.room_group_name = 'chat_%s' % self.room_name
-
+        self.white_player = self.scope['url_route']['kwargs']['white_player']  
+        self.black_player = self.scope['url_route']['kwargs']['black_player'] 
+        self.room_group_name = self.white_player + self.black_player
+        print(self.room_group_name)
+        print("Channel name: " + str(self.channel_name))
         await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
 
-        self.accept()
+        await self.send({
+            "type": "websocket.accept",
+        })
         
         """
         board_obj = await self.get_board(me, opponent)
@@ -37,14 +38,13 @@ class GameConsumer(AsyncConsumer):
         """
 
     async def websocket_receive(self, event):
-        event_json = json.loads(event)
-        action = event_json['action']
-
+        # event_json = json.loads(event)
+        # print("Channel layer is: " + str(channel_layer))
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                     'type': 'make_move',
-                    'action': action
+                    'move': event
             }
         )
         
@@ -66,13 +66,17 @@ class GameConsumer(AsyncConsumer):
     async def make_move(self, event):
         await self.send({
             "type": "websocket.send",
-            "action": event['action']
+            "move": event['move']
         })
+        print(event['move'])
 
 
     async def websocket_disconnect(self, event):
+        print("disconnected", event)
+        """
          async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name,
             self.channel_name
         )
+        """
         
