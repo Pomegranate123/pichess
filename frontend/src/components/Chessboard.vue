@@ -13,6 +13,7 @@ export default {
   data () {
     return {
       websocket: null,
+      username: null,
       white: this.$route.params.white,
       black: this.$route.params.black,
       fen: this.fen_prop,
@@ -227,6 +228,20 @@ export default {
   },
   mounted () {
     this.loadPosition()
+
+    const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+    this.axios
+      .get('/api/accounts/profile/', headers)
+      .then(response => {
+        this.username = response.data.username
+        if (this.username === this.black) {
+          this.orientation = 'black'
+        }
+      })
+      .catch(error => {
+        console.log(error)
+    })
+
     this.websocket = new WebSocket("ws://" + window.location.host + "/wss/game/" + this.white + "/" + this.black)
     if (this.websocket != undefined) {
       this.websocket.onopen = function() {

@@ -57,7 +57,6 @@ export default {
         })
         .catch(error => {
           console.log(error)
-          this.wrong_info()
           this.password = ''
           this.errormsg = 'Inloggegevens verkeerd'
       })
