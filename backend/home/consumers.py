@@ -41,7 +41,7 @@ class LobbyConsumer(AsyncConsumer):
             {
                 "type": "send_challenge",
                 "text": event
-            }
+            })
 
     async def send_challenge(self, event):
         self.send({
