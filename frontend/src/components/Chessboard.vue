@@ -127,6 +127,7 @@ export default {
       return (orig, dest) => {
         let move = {"orig": orig, "dest": dest}
         this.websocket.send(JSON.stringify(move))
+        console.log("Sent to websocket: " + JSON.stringify(move))
         if (this.isPromotion(orig, dest)) {
           this.promoteTo = this.onPromotion()
         }
@@ -135,7 +136,7 @@ export default {
           fen: this.game.fen(),
           turnColor: this.toColor(),
           movable: {
-            color: this.color,
+            color: this.color, //this.color
             dests: this.possibleMoves(),
           }
         })
@@ -193,7 +194,7 @@ export default {
         fen: this.game.fen(),
         turnColor: this.toColor(),
         movable: {
-          color: this.color,
+          color: this.color, //this.color
           free: this.free,
           dests: this.possibleMoves(),
         },
