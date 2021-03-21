@@ -198,7 +198,11 @@ export default {
       return uniqueArray
     },
     loadPosition () {
-      this.game.load(this.fen)
+      if (this.$cookie.isCookieAvailable(this.$route.params.id)) {
+        this.game.load(this.$cookie.getCookie(this.$route.params.id))
+      } else {
+        this.game.load(this.fen)
+      }
       this.board = Chessground(this.$refs.board, {
         fen: this.game.fen(),
         turnColor: this.toColor(),
@@ -224,6 +228,7 @@ export default {
           this.promoteTo = this.onPromotion()
         }
         this.game.move({from: move["orig"], to: move["dest"], promotion: this.promoteTo})
+        this.$cookie.setCookie(this.$route.params.id, this.game.fen())
         this.board.set({
           fen: this.game.fen(),
           turnColor: this.toColor(),

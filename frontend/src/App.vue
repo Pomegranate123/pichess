@@ -21,7 +21,7 @@ export default {
         let data = JSON.parse(event.data)
         console.log(data)
         if (data.type === 'challenge') {
-          this.$router.push({ name: 'game', params: { white: data.white, black: data.black, time: data.time, inc: data.inc }})
+          this.$router.push({ name: 'game', params: { white: data.white, black: data.black, time: data.time, inc: data.inc, id: data.id }})
         }
       })
     }

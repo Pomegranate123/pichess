@@ -61,7 +61,7 @@ export default {
           this.black = this.username
           this.white = this.opponent
         }
-        let challenge = {"type": "challenge", "white": this.white, "black": this.black, "time": time, "inc": this.inc}
+        let challenge = {"type": "challenge", "white": this.white, "black": this.black, "time": time, "inc": this.inc, "id": Date.now()}
         this.ws.send(JSON.stringify(challenge))
       } else {
         alert("Invalid challenge. A valid challenge has at least one second on the clock and a valid username.")

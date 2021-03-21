@@ -22,7 +22,7 @@ const routes = [
         component: () => import('@/views/signup.vue')
       },
       {
-        path: '/game/:white/:black/:time/:inc',
+        path: '/game/:white/:black/:time/:inc/:id',
         name: 'game',
         component: () => import('@/views/game.vue')
       },
