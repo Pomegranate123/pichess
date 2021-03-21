@@ -80,7 +80,7 @@ export default {
           this.black = this.username
           this.white = this.opponent
         }
-        let link = window.location.protocol + "//" + window.location.host + "/#/game/" + this.white + "/" + this.black + "/" + time + "/" + this.inc
+        let link = window.location.protocol + "//" + window.location.host + "/#/game/" + this.white + "/" + this.black + "/" + time + "/" + this.inc + "/" + Date.now()
 
         var dummy = document.createElement("textarea")
         document.body.appendChild(dummy)
