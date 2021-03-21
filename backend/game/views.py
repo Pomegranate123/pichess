@@ -15,15 +15,16 @@ def room(request, room_name):
 
 def rating(request):
     opponent_rating = int(request.GET.get('rating').split("?")[0])
-    win = request.GET.get('win')
+    win = int(request.GET.get('win'))
     user_rating = int(request.user.email)
+    added_rating = round((opponent_rating - user_rating) * 0.04) + 10
+    if added_rating != 0:
+        if added_rating < 1:
+            added_rating = 1
     if win:
-        added_rating = round((opponent_rating - user_rating) * 0.04) + 10
-    else:
-        added_rating = -(round((opponent_rating - user_rating) * 0.04) + 10)
-    if added_rating < 1:
-        added_rating = 1
-    new_rating = user_rating + added_rating
+        new_rating = user_rating + added_rating
+    else: 
+        new_rating = user_rating - added_rating
     user = User.objects.get(username=request.user)
     user.email = new_rating
     user.save()

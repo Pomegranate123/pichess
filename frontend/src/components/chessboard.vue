@@ -281,9 +281,21 @@ export default {
       }
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       this.axios
-        .get('/api/game/new_rating?rating=' + this.opponentrating + '?win=' + win.toString(), headers)
+        .get('/api/game/new_rating?rating=' + this.opponentrating + '&win=' + win.toString(), headers)
         .then(response => {
           this.rating = response.data.rating
+          setTimeout(this.getOpponentRating(), 1000)
+        })
+        .catch(error => {
+          console.log(error)
+      })
+    },
+    getOpponentRating () {
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      this.axios
+        .get('/api/home/get_rating?username=' + this.opponentusername, headers)
+        .then(response => {
+          this.opponentrating = response.data.rating
         })
         .catch(error => {
           console.log(error)
@@ -302,15 +314,7 @@ export default {
       this.orientation = this.color
       this.loadPosition()
       if (this.opponentusername != "Guest") {
-        const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
-        this.axios
-          .get('/api/home/get_rating?username=' + this.opponentusername, headers)
-          .then(response => {
-            this.opponentrating = response.data.rating
-          })
-          .catch(error => {
-            console.log(error)
-        })
+        this.getOpponentRating()
       }
     }
   },
