@@ -53,6 +53,7 @@ export default {
       this.axios
         .post('api/accounts/authenticate/', data, headers)
         .then(() => {
+          this.ws.send('{"type":"add"}')
           this.$router.push({ name: 'play' })
         })
         .catch(error => {
@@ -61,6 +62,9 @@ export default {
           this.errormsg = 'Inloggegevens verkeerd'
       })
     }
+  },
+  mounted () {
+    this.reload = !this.reload
   }
 }
 </script>

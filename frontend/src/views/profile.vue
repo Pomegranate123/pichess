@@ -22,6 +22,7 @@ export default {
       this.axios
         .get("/api/accounts/logout", headers)
         .then(() => {
+          this.ws.send('{"type":"remove"}')
           this.$router.push({ name: 'login' })
         })
         .catch(error => {
@@ -30,6 +31,7 @@ export default {
     }
   },
   mounted () {
+    this.reload = !this.reload
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
       .get('/api/accounts/profile/', headers)

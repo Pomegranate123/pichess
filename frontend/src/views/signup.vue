@@ -1,5 +1,5 @@
 <template>
-  <form on-submit="return false">
+  <form onsubmit="return false">
     <h1>Sign up</h1>
     <div class=form-group>
       <label for="username">Username</label><br>
@@ -62,6 +62,7 @@ export default {
       this.axios
         .post('api/accounts/authenticate/', data, headers)
         .then(() => {
+          this.ws.send('{"type":"add"}')
           this.$router.push({ name: 'play' })
         })
         .catch(error => {

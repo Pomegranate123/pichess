@@ -45,7 +45,7 @@ class GameConsumer(AsyncConsumer):
     async def websocket_disconnect(self, event):
         print("disconnected", event)
         
-        self.channel_layer.group_discard(
+        await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )
@@ -92,7 +92,7 @@ class ChatConsumer(AsyncConsumer):
     async def websocket_disconnect(self, event):
         print("disconnected", event)
         
-        self.channel_layer.group_discard(
+        await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
         )

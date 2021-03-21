@@ -1,11 +1,11 @@
 <template>
   <div class="boardcontainer">
     <div class="name" v-if="this.black === this.username">{{ white }} ({{ opponentrating }})</div>
-    <div class="name" v-else>{{ black }} ({{ opponentrating }})</div><div class="clock">{{ opponentclock }}</div>
+    <div class="name" v-else>{{ black }} ({{ opponentrating }})</div><div class="clock" id="opponentclock">{{ opponentclock }}</div>
     <div class='blue merida'>
       <div ref="board" class="cg-board-wrap"></div><br>
     </div>
-    <div class="name">{{ username }} ({{ rating }})</div><div class="clock">{{ clock }}</div>
+    <div class="name">{{ username }} ({{ rating }})</div><div class="clock" id="clock">{{ clock }}</div>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ export default {
   data () {
     return {
       gameover: false,
-      timecontrol: 600000,
+      timecontrol: this.$route.params.time * 1000,
       movecolor: null, //this.toColor()
 
       date: new Date().getTime(),
@@ -27,8 +27,8 @@ export default {
 
       firstmove: true,
       opponentfirstmove: true,
-      time: Date.now() + 600000,
-      opponenttime: Date.now() + 600000,
+      time: Date.now() + this.$route.params.time * 1000,
+      opponenttime: Date.now() + this.$route.params.time * 1000,
 
       username: null,
       opponentusername: null,
@@ -238,8 +238,11 @@ export default {
             viewOnly: true,
           })
           if (this.game.in_checkmate()) {
-            console.log(this.toColor() + " got checkmated")
-            this.winGame(this.toColor())
+            if (this.toColor() === 'white') {
+              this.winGame('black')
+            } else {
+              this.winGame('white')
+            }
           } else if (this.game.in_draw()) {
             console.log("draw")
           }
@@ -259,6 +262,7 @@ export default {
           this.opponentfirstmove = false
         } else {
           this.opponentlastdate = Date.now()
+          this.opponenttime = this.opponenttime + parseInt(this.$route.params.inc) * 1000
           this.time = this.time - this.lastdate + Date.now()
         }
       } else {
@@ -270,21 +274,22 @@ export default {
           this.firstmove = false
         } else {
           this.lastdate = Date.now()
+          this.time = this.time + parseInt(this.$route.params.inc) * 1000
           this.opponenttime = this.opponenttime - this.opponentlastdate + Date.now()
         }
       }
     },
     winGame (color) {
-      let win = 1
+      let win = 0
       if (color === this.color) {
-        win = 0
+        win = 1
       }
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       this.axios
         .get('/api/game/new_rating?rating=' + this.opponentrating + '&win=' + win.toString(), headers)
         .then(response => {
           this.rating = response.data.rating
-          setTimeout(this.getOpponentRating(), 1000)
+          this.getOpponentRating()
         })
         .catch(error => {
           console.log(error)
@@ -365,15 +370,45 @@ export default {
     setInterval(() => {
       this.moveColor = this.toColor()
     })
+    setInterval(() => {
+      if (!this.firstmove && !this.opponentfirstmove) {
+        if (this.moveColor === this.color) {
+          if (this.time - this.date <= 0) {
+            if (!this.gameover) {
+              let date = Date.now()
+              this.time = date
+              this.lastdate = date
+              this.gameover = true
+              this.board.set({
+                viewOnly: true,
+              })
+              this.winGame(this.opponentcolor)
+            }
+          }
+        } else {
+          if (this.opponenttime - this.date <= 0) { 
+            if (!this.gameover) {
+              let date = Date.now()
+              this.opponenttime = date
+              this.opponentlastdate = date
+              this.gameover = true
+              this.board.set({
+                viewOnly: true,
+              })
+              this.winGame(this.color)
+            }
+          }
+        }
+      }
+    })
   },
   computed: {
     clock: function () {
       let timeleft = this.time - this.date
-      if (timeleft <= 0) {
-        return "00:00"
-      }
       if (!((this.moveColor === this.color) && (!this.firstmove)) || this.gameover) {
         timeleft = this.time - this.lastdate
+      } else if (timeleft <= 0) {
+        return "00:00"
       }
       let secondsleft = Math.floor((timeleft / 1000) % 60)
       secondsleft = secondsleft.toString().padStart(2, "0")
@@ -383,11 +418,10 @@ export default {
     },
     opponentclock: function () {
       let timeleft = this.opponenttime - this.date
-      if (timeleft <= 0) {
-        return "00:00"
-      }
       if (!((this.moveColor != this.color) && (!this.opponentfirstmove)) || this.gameover) {
         timeleft = this.opponenttime - this.opponentlastdate
+      } else if (timeleft <= 0) {
+        return "00:00"
       }
       let secondsleft = Math.floor((timeleft / 1000) % 60)
       secondsleft = secondsleft.toString().padStart(2, "0")

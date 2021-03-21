@@ -15,6 +15,17 @@
 
 <script>
 export default {
+  methods: {
+    getChallenge () {
+      return (event => {
+        let data = JSON.parse(event.data)
+        console.log(data)
+        if (data.type === 'challenge') {
+          this.$router.push({ name: 'game', params: { white: data.white, black: data.black, time: data.time, inc: data.inc }})
+        }
+      })
+    }
+  },
   mounted () {
     if (this.ws != undefined) {
       this.ws.onopen = function() {
@@ -36,6 +47,7 @@ export default {
       this.ws.onerror = function(error) {
         console.log(`<lobby> [error] ${error.message}`)
       }
+      this.ws.addEventListener('message', this.getChallenge(event))
     }
   }
 }
