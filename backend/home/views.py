@@ -29,6 +29,15 @@ def profile(request):
         }
         return JsonResponse(data)
 
+def get_rating(request, username):
+    username = username['username']
+    rating = User.objects.filter(username=username).values("email")[0]['email']
+    data = {
+        'rating': rating
+    }
+
+    return JsonResponse(data)
+
 def players(request):
     users = list(Room.get_users(1).values())
     online_list = []
