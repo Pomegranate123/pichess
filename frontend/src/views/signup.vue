@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form on-submit="return false">
     <h1>Sign up</h1>
     <div class=form-group>
       <label for="username">Username</label><br>
@@ -56,12 +56,26 @@ export default {
         this.disable_button=true
       }
     },
+    login() {
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      const data = { 'password': this.password, 'username': this.username }
+      this.axios
+        .post('api/accounts/authenticate/', data, headers)
+        .then(() => {
+          this.$router.push({ name: 'play' })
+        })
+        .catch(error => {
+          console.log(error)
+      })
+    },
     signup() {
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       const data = { 'password': this.password, 'username': this.username }
       this.axios
         .post('/api/accounts/register/', data, headers)
-        .then(() => {})
+        .then(() => {
+          this.login()
+        })
         .catch(error => {
           this.used_username()
           console.log(error)

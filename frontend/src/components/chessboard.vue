@@ -288,7 +288,30 @@ export default {
         .catch(error => {
           console.log(error)
       })
-      
+    },
+    setup () {
+      if (this.username === this.white) {
+        this.color = "white"
+        this.opponentcolor = "black"
+        this.opponentusername = this.black
+      } else {
+        this.color = "black"
+        this.opponentcolor = "white"
+        this.opponentusername = this.white
+      }
+      this.orientation = this.color
+      this.loadPosition()
+      if (this.opponentusername != "Guest") {
+        const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+        this.axios
+          .get('/api/home/get_rating?username=' + this.opponentusername, headers)
+          .then(response => {
+            this.opponentrating = response.data.rating
+          })
+          .catch(error => {
+            console.log(error)
+        })
+      }
     }
   },
   mounted () {
@@ -298,28 +321,15 @@ export default {
       .then(response => {
         this.username = response.data.username
         this.rating = response.data.rating
-        if (this.username === this.white) {
-          this.color = "white"
-          this.opponentcolor = "black"
-          this.opponentusername = this.black
-        } else {
-          this.color = "black"
-          this.opponentcolor = "white"
-          this.opponentusername = this.white
-        }
-        this.orientation = this.color
-        this.loadPosition()
-        this.axios
-          .get('/api/home/get_rating?username=' + this.opponentusername, headers)
-          .then(response => {
-            this.opponentrating = response.data.rating
-          })
-          .catch(error => {
-            console.log(error)
-        })
+        this.setup()
       })
-      .catch(error => {
-        console.log(error)
+      .catch(() => {
+        if (this.white === "Guest" || this.black === "Guest") {
+          this.username = "Guest"
+          this.setup()
+        } else {
+          this.$router.push({ name: 'login' })
+        }
     })
 
     this.websocket = new WebSocket("ws://" + window.location.host + "/wss/game/" + this.white + "/" + this.black)

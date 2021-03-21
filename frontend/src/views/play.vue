@@ -24,7 +24,7 @@ export default {
       white: null,
       black: null,
       opponent: null,
-      username: null,
+      username: "Guest",
       players: null,
     }
   },

@@ -22,6 +22,7 @@ export default {
       this.axios
         .get("/api/accounts/logout", headers)
         .then(() => {
+          this.$router.push({ name: 'login' })
         })
         .catch(error => {
           console.log(error)

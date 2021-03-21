@@ -53,7 +53,7 @@ export default {
       this.axios
         .post('api/accounts/authenticate/', data, headers)
         .then(() => {
-          this.$router.push({ name: 'home' })
+          this.$router.push({ name: 'play' })
         })
         .catch(error => {
           console.log(error)
