@@ -12,8 +12,9 @@ def room(request, room_name):
         'room_name_json': mark_safe(json.dumps(room_name))
     })
 
-def rating(request, opponent, win):
-    opponent_rating = opponent['rating']
+def rating(request):
+    opponent_rating = request.GET.get('rating')
+    win = request.GET.get('win')
     user_rating = request.user.player.rating
     if win:
         added_rating = round((opponent_rating - user_rating) * 0.04) + 10

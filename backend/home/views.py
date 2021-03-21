@@ -31,7 +31,6 @@ def profile(request):
 
 def get_rating(request):
     username = request.GET.get('username')
-    # request.GET.get('username')
     rating = User.objects.filter(username=username).values("email")[0]['email']
     data = {
         'rating': rating
