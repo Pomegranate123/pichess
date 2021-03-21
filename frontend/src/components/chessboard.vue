@@ -19,19 +19,26 @@ export default {
     return {
       gameover: false,
       timecontrol: 600000,
-      movecolor: null,
+      movecolor: null, //this.toColor()
+
       date: new Date().getTime(),
-      firstmove: true,
-      opponentfirstmove: true,
       lastdate: Date.now(),
       opponentlastdate: Date.now(),
+
+      firstmove: true,
+      opponentfirstmove: true,
       time: Date.now() + 600000,
       opponenttime: Date.now() + 600000,
-      websocket: null,
+
       username: null,
+      opponentusername: null,
       color: null,
+      opponentcolor: null,
       rating: "????",
       opponentrating: "????",
+
+      websocket: null,
+
       white: this.$route.params.white,
       black: this.$route.params.black,
       fen: this.fen_prop,
@@ -231,11 +238,8 @@ export default {
             viewOnly: true,
           })
           if (this.game.in_checkmate()) {
-            if (this.color === this.toColor()) {
-              console.log("you got checkmated")
-            } else {
-              console.log("opponent got checkmated")
-            }
+            console.log(this.toColor() + " got checkmated")
+            this.winGame(this.toColor())
           } else if (this.game.in_draw()) {
             console.log("draw")
           }
@@ -271,9 +275,13 @@ export default {
       }
     },
     winGame (color) {
+      let win = 1
+      if (color === this.color) {
+        win = 0
+      }
       const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
       this.axios
-        .get('/api/home/rating', headers)
+        .get('/api/game/new_rating?rating=' + this.opponentrating + '?win=' + win.toString(), headers)
         .then(response => {
           this.rating = response.data.rating
         })
@@ -292,17 +300,17 @@ export default {
         this.rating = response.data.rating
         if (this.username === this.white) {
           this.color = "white"
+          this.opponentcolor = "black"
+          this.opponentusername = this.black
         } else {
           this.color = "black"
+          this.opponentcolor = "white"
+          this.opponentusername = this.white
         }
         this.orientation = this.color
         this.loadPosition()
-        let user = this.white
-        if (this.color === "white") {
-          user = this.black
-        }
         this.axios
-          .get('/api/home/get_rating?username=' + user, headers)
+          .get('/api/home/get_rating?username=' + this.opponentusername, headers)
           .then(response => {
             this.opponentrating = response.data.rating
           })
