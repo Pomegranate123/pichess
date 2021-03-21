@@ -1,11 +1,11 @@
 <template>
   <div class="boardcontainer">
-    <div class="name" v-if="this.black === this.username">{{ this.white }}</div>
-    <div class="name" v-else>{{ this.black }}</div><div class="clock">{{opponentclock}}</div>
+    <div class="name" v-if="this.black === this.username">{{ white }} ({{ opponentrating }})</div>
+    <div class="name" v-else>{{ black }} ({{ opponentrating }})</div><div class="clock">{{ opponentclock }}</div>
     <div class='blue merida'>
       <div ref="board" class="cg-board-wrap"></div><br>
     </div>
-    <div class="name">{{ this.username }}</div><div class="clock">{{clock}}</div>
+    <div class="name">{{ username }} ({{ rating }})</div><div class="clock">{{ clock }}</div>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ export default {
   name: 'chessboard',
   data () {
     return {
+      gameover: false,
       timecontrol: 600000,
       movecolor: null,
       date: new Date().getTime(),
@@ -29,6 +30,8 @@ export default {
       websocket: null,
       username: null,
       color: null,
+      rating: "????",
+      opponentrating: "????",
       white: this.$route.params.white,
       black: this.$route.params.black,
       fen: this.fen_prop,
@@ -141,20 +144,6 @@ export default {
       return (orig, dest) => {
         let move = {"orig": orig, "dest": dest}
         this.websocket.send(JSON.stringify(move))
-        if (this.isPromotion(orig, dest)) {
-          this.promoteTo = this.onPromotion()
-        }
-        this.game.move({from: orig, to: dest, promotion: this.promoteTo})
-        this.board.set({
-          fen: this.game.fen(),
-          turnColor: this.toColor(),
-          movable: {
-            dests: this.possibleMoves(),
-          }
-        })
-
-        this.calculatePromotion()
-        this.afterMove()
       }
     },
     afterMove () {
@@ -236,6 +225,21 @@ export default {
             dests: this.possibleMoves(),
           }
         })
+        if (this.game.game_over()) {
+          this.gameover = true
+          this.board.set({
+            viewOnly: true,
+          })
+          if (this.game.in_checkmate()) {
+            if (this.color === this.toColor()) {
+              console.log("you got checkmated")
+            } else {
+              console.log("opponent got checkmated")
+            }
+          } else if (this.game.in_draw()) {
+            console.log("draw")
+          }
+        }
         this.calculatePromotion()
         this.afterMove()
         this.changeClock()
@@ -265,14 +269,27 @@ export default {
           this.opponenttime = this.opponenttime - this.opponentlastdate + Date.now()
         }
       }
+    },
+    winGame (color) {
+      const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
+      this.axios
+        .get('/api/home/rating', headers)
+        .then(response => {
+          this.rating = response.data.rating
+        })
+        .catch(error => {
+          console.log(error)
+      })
+      
     }
   },
   mounted () {
     const headers = {'headers': {'X-CSRFToken': this.$cookie.getCookie('csrftoken')}}
     this.axios
-      .get('/api/accounts/profile/', headers)
+      .get('/api/accounts/profile', headers)
       .then(response => {
         this.username = response.data.username
+        this.rating = response.data.rating
         if (this.username === this.white) {
           this.color = "white"
         } else {
@@ -280,6 +297,18 @@ export default {
         }
         this.orientation = this.color
         this.loadPosition()
+        let user = this.white
+        if (this.color === "white") {
+          user = this.black
+        }
+        this.axios
+          .get('/api/home/get_rating?username=' + user, headers)
+          .then(response => {
+            this.opponentrating = response.data.rating
+          })
+          .catch(error => {
+            console.log(error)
+        })
       })
       .catch(error => {
         console.log(error)
@@ -318,7 +347,10 @@ export default {
   computed: {
     clock: function () {
       let timeleft = this.time - this.date
-      if (!((this.moveColor === this.color) && (!this.firstmove))) {
+      if (timeleft <= 0) {
+        return "00:00"
+      }
+      if (!((this.moveColor === this.color) && (!this.firstmove)) || this.gameover) {
         timeleft = this.time - this.lastdate
       }
       let secondsleft = Math.floor((timeleft / 1000) % 60)
@@ -329,7 +361,10 @@ export default {
     },
     opponentclock: function () {
       let timeleft = this.opponenttime - this.date
-      if (!((this.moveColor != this.color) && (!this.opponentfirstmove))) {
+      if (timeleft <= 0) {
+        return "00:00"
+      }
+      if (!((this.moveColor != this.color) && (!this.opponentfirstmove)) || this.gameover) {
         timeleft = this.opponenttime - this.opponentlastdate
       }
       let secondsleft = Math.floor((timeleft / 1000) % 60)
